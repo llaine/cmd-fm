@@ -1,0 +1,8 @@
+#!/bin/sh
+# Watch task, always create a new app.js file, in order to automate
+# test, i create this tiny script.
+
+filename="dist/app.js"
+chmod +x $filename
+./$filename $@
+
