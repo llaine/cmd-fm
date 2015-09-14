@@ -10,11 +10,14 @@ program.version('0.0.1');
 program
     .command('play <gender>')
     .description('Play a playlist with a specific genre')
-    .action((gender, options) => {
-      console.log(`
-        You guys want to play
-        ${gender}
-      `);
+    .action((gender) => {
+        api.getSongsFromGenre(gender).then(tracks => {
+            //Just display first element to test api return
+            console.log(tracks);
+            //api.getStreamTrack(tracks[0]).then(track => {
+            //    console.log(track);
+            //});
+        })
     });
 
 program

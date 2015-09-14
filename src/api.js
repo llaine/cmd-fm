@@ -39,6 +39,22 @@ class Api {
         }
     )
   }
+
+  getStreamTrack(track) {
+    return new Promise(
+        function (resolve, reject) {
+          restler
+              .get(track.stream_url + settings.api.v1.clientid_soundcloud, {followRedirects: true})
+              .on('complete', result => {
+                if (result instanceof Error) {
+                  reject(result);
+                } else {
+                  resolve(result);
+                }
+              });
+        }
+    )
+  }
 }
 
 export default Api
