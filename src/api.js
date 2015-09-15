@@ -1,6 +1,8 @@
 'use strict';
 
 import restler from 'restler';
+import request from 'request';
+
 import { settings } from './environment';
 
 class Api {
@@ -40,18 +42,17 @@ class Api {
     )
   }
 
-  getStreamTrack(track) {
+  getStreamUrlTrack(track){
     return new Promise(
-        function (resolve, reject) {
-          restler
-              .get(track.stream_url + settings.api.v1.clientid_soundcloud, {followRedirects: true})
-              .on('complete', result => {
-                if (result instanceof Error) {
-                  reject(result);
+        function(resolve, reject) {
+            var urlSoundCloud = track.stream_url + settings.api.v1.clientid_soundcloud;
+            request.get(urlSoundCloud, (err, res, body) => {
+                if(err){
+                    reject(err);
                 } else {
-                  resolve(result);
+                    resolve(res.request.uri.href);
                 }
-              });
+            })
         }
     )
   }
