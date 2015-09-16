@@ -1,39 +1,46 @@
 'use strict';
 
-import Api from 'api.js';
+import Api from './api.js';
 
-export default class Playlist {
+class Playlist {
   /**
    * A Playlist contain:
    * trackList : Map
    * name : String
-   * slug : String
-   * @param opts
+   * @param genre
    */
-  constructor(opts) {
+  constructor(genre) {
     this.trackList = new Map();
-    this.name = opts.name;
-    this.slug = opts.slug;
+    this.name = genre;
     this.api = new Api();
-    fetchTracks();
   }
 
   /**
    * Fill the trackList Map with all the api can provide to us.
    */
   fetchTracks() {
-    if (this.name) {
-      this.api.getSongsFromGenre(this.name)
-        .then(tracks => {
-          tracks.map(track => {
-            let newTrack = new Track(track.title, track.description, track.duration,  track.stream_url,
-                track.tag_list,
-                track.waveform_url,
-                track.artwork_Url);
-            this.trackList.set(track._id, newTrack);
-          });
-        });
-    }
+    return new Promise(
+        (resolve, reject) => {
+          if (!this.name) reject(new Error('Undefined genre'));
+          if (this.trackList.size > 0) {
+            resolve(this.trackList);
+          } else {
+            // Fetching from the API
+            this.api.getSongsFromGenre(this.name)
+              .then(tracks => {
+                tracks.map(track => {
+                  let newTrack = new Track(track.title, track.description, track.duration,  track.stream_url,
+                      track.tag_list,
+                      track.waveform_url,
+                      track.artwork_Url);
+                  this.trackList.set(track._id, newTrack);
+                });
+                resolve(this.trackList);
+              });
+          }
+
+        }
+    )
   }
 
   /**
@@ -41,12 +48,13 @@ export default class Playlist {
    * @returns {Map|*}
    */
   getTracks() {
-    return this.trackList;
+    return this.fetchTracks();
   }
 }
 
 
-export default class Track {
+let api = new Api();
+class Track {
   /**
    * A track
    * @param title
@@ -74,6 +82,9 @@ export default class Track {
   }
 
   getStreamUrl() {
-    // TODO
+    return api.getStreamUrlTrack(this);
   }
 }
+
+
+export { Playlist, Track };
