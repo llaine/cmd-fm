@@ -45,11 +45,15 @@ class Api {
   getStreamUrlTrack(track){
     return new Promise(
         function(resolve, reject) {
-            var urlSoundCloud = track.stream_url + settings.api.v1.clientid_soundcloud;
-            request.get(urlSoundCloud, (err, res, body) => {
+            var urlSoundCloud = track.streamUrl + settings.api.v1.clientid_soundcloud;
+            var _options = {
+                uri: urlSoundCloud,
+                followAllRedirects: true
+            };
+            request.get(_options, (err, res, body) => {
                 if(err){
                     reject(err);
-                } else {
+                } else if(res && res.statusCode === 200) {
                     resolve(res.request.uri.href);
                 }
             })
