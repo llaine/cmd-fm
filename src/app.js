@@ -3,6 +3,7 @@
 import Api from './api.js';
 import { Playlist, Track } from './models.js';
 import program from 'commander';
+import CmdPlayer from './cmdPlayer.js';
 
 let api = new Api();
 
@@ -12,13 +13,19 @@ program
   .command('play <gender>')
   .description('Play a playlist with a specific genre')
   .action((gender) => {
-    // TODO Instantiate the player object
-    // with the map of tracks.
     let playlist = new Playlist(gender);
     playlist.getTracks().then(tracks => {
+      var cmdPlayer;
       for(let track of tracks.values()) {
         track.getStreamUrl().then(url => {
-          console.log(url);
+          if(!cmdPlayer){
+            console.log(`- Create the player with ${track.title}`);
+            cmdPlayer = new CmdPlayer(url);
+            cmdPlayer.play();
+          }else{
+            console.log(`- Add  song in the playlist ${track.title}`);
+            cmdPlayer.add(url);
+          }
         })
       }
     });
