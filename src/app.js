@@ -21,7 +21,6 @@ program
           if(!cmdPlayer){
             cmdPlayer = new CmdPlayer(track);
             cmdPlayer.play();
-            recursivePrompt(cmdPlayer);
           }else{
             cmdPlayer.add(track);
           }
