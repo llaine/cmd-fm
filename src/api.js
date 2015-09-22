@@ -32,7 +32,7 @@ class Api {
           restler
             .get(settings.api.v1.songs_genre + genre)
             .on('complete', result => {
-                console.log(`- getSongsFromGenre ${genre}`);
+                console.log(`Get tracks from ${genre}`);
               if(result instanceof Error) {
                 reject(result)
               } else {

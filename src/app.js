@@ -1,10 +1,9 @@
-#!/usr/bin/env node
+#! /usr/bin/env node --harmony
 
 import Api from './api.js';
 import { Playlist, Track } from './models.js';
 import program from 'commander';
 import CmdPlayer from './cmdPlayer.js';
-
 let api = new Api();
 
 program.version('0.0.1');
@@ -14,17 +13,17 @@ program
   .description('Play a playlist with a specific genre')
   .action((gender) => {
     let playlist = new Playlist(gender);
+    var cmdPlayer;
     playlist.getTracks().then(tracks => {
-      var cmdPlayer;
       for(let track of tracks.values()) {
         track.getStreamUrl().then(url => {
+          track.url = url;
           if(!cmdPlayer){
-            console.log(`- Create the player with ${track.title}`);
-            cmdPlayer = new CmdPlayer(url);
+            cmdPlayer = new CmdPlayer(track);
             cmdPlayer.play();
+            recursivePrompt(cmdPlayer);
           }else{
-            console.log(`- Add  song in the playlist ${track.title}`);
-            cmdPlayer.add(url);
+            cmdPlayer.add(track);
           }
         })
       }
